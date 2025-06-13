@@ -167,6 +167,36 @@ export default {
             }
             reader.readAsArrayBuffer(file)
         },
+        // New Logic Implemented -> Send parsed messages to backend -> Ashutosh Mishra
+        async sendDataToBackend (parsedData) {
+            this.transferMessage = 'Sending data to AI agent...'
+            this.uploadpercentage = 100
+
+            try {
+                const response = await fetch('http://localhost:5000/api/set-flight-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(parsedData)
+                })
+
+                if (response.ok) {
+                    console.log('Backend has successfully received and cached the flight data.')
+                    this.transferMessage = 'Agent is ready!'
+                    setTimeout(() => { this.uploadpercentage = -1 }, 3000)
+                } else {
+                    const data = await response.json()
+                    console.error('Backend failed to cache the flight data:', data.error)
+                    this.transferMessage = 'Error connecting to AI agent!'
+                }
+            } catch (error) {
+                console.error('Error sending to backend:', error)
+                this.transferMessage = 'Connection Error!'
+            }
+        },
+        // End of New Logic -> Ashutosh Mishra
+
         uploadFile () {
             this.uploadStarted = true
             this.transferMessage = 'Upload Done!'
@@ -250,6 +280,8 @@ export default {
                 this.$eventHub.$emit('messages')
             } else if (event.data.messagesDoneLoading) {
                 this.$eventHub.$emit('messagesDoneLoading')
+                // console.log('Frontend Parser finished. Sending all parsed data to backend...')
+                // this.sendDataToBackend(this.state.messages)
             } else if (event.data.messageType) {
                 this.state.messages[event.data.messageType] = event.data.messageList
                 this.$eventHub.$emit('messages')

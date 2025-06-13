@@ -112,6 +112,7 @@ module.exports = {
       https: require.resolve("https-browserify"),
       http: require.resolve("stream-http"),
       zlib: require.resolve("browserify-zlib"),
+      vm: require.resolve('vm-browserify')
     },
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
