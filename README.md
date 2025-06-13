@@ -1,19 +1,62 @@
-# UAV Log Viewer
+# Agentic UAV Log Viewer
 
-![log seeking](preview.gif "Logo Title Text 1")
+-By Ashutosh Mishra
 
-This is a JavaScript-based log viewer for MAVLink telemetry and DataFlash logs.  
-[Live demo here](http://plot.ardupilot.org).
+This project extends the original UAV Log Viewer with a powerful, full-stack agentic chatbot. The chatbot, named "Telemetric Whisperer," allows users to have a natural language conversation about complex flight data from ArduPilot .bin logs.
 
 ---
 
-## 🚀 Features
+🎥 Live Demo
 
-- Visualize UAV flight logs interactively
-- Supports both `.bin` (DataFlash) and `.tlog` (MAVLink) formats
-- 3D flight path rendering via Cesium
-- Realtime graph overlays for telemetry parameters
+[Link to your screen-recorded video demonstrating the full functionality. You can upload the video to a service like Google Drive or Dropbox and share the link here, as requested in the challenge instructions.]
 
+---
+
+✨ Key Features
+
+Agentic Chat Interface: A polished chat UI built in Vue.js allows users to ask questions about their flight logs. The interface supports dark/light modes and chat transcript downloads.
+Advanced Tool-Using AI: The backend is powered by a LangGraph agent that uses a suite of 15+ custom tools to analyze flight data. This is not a simple Q&amp;A bot; it's a reasoning engine.
+Full-Stack Integration: A new Python Flask backend serves the AI agent and communicates seamlessly with the existing Vue.js frontend.
+Deep Log Analysis: The agent can answer specific questions about flight time, max altitude, GPS loss, critical errors, and battery temperature.
+Flight Anomaly Detection: Go beyond simple queries. The agent can perform high-level analysis to spot unusual altitude drops, check EKF health, and summarize all detected anomalies across the flight.
+Live Documentation Lookup: The agent can scrape the official ArduPilot documentation in real-time to explain error codes and log messages.
+Non-Invasive Architecture: The new features are added without breaking any of the original Log Viewer's functionality, using a parallel-parsing strategy in the frontend.
+
+---
+🏗️ System Architecture
+The application uses a decoupled, full-stack architecture. The frontend handles the user interface and initial client-side parsing, while the Python backend manages the AI agent, tool execution, and communication with the LLM.
+
+```mermaid
+graph TD
+    subgraph Browser
+        A[User] -- 1. Uploads .bin file --> B(Vue.js Frontend);
+        B -- 2. Parses file in Web Worker --> C(Universal JS Parser);
+        C -- 3. Sends Full JSON to Backend --> D;
+        B -- (Original data flow preserved) --> E[Plotly/Cesium UI];
+        A -- 4. Asks Question in Chat UI --> F(Agent Chat Component);
+        F -- 5. Sends API Request --> D;
+    end
+    
+    subgraph "Python Backend (Flask)"
+        D[API Endpoint /api/set-flight-data];
+        G[API Endpoint /api/chat];
+        D -- Caches data --> H{In-Memory Cache};
+        F --> G;
+        G -- Invokes Agent --> I(LangGraph Agent);
+        I -- Uses --> J[Flight Analysis Tools];
+        J -- Reads data --> H;
+    end
+
+    subgraph "AI & Services"
+        I -- Reasons with --> K(Google Gemini LLM);
+        J -- (Optional) --> L[ArduPilot Docs];
+    end
+
+    K -- Decides which tool to use --> I;
+    I -- Returns final answer --> G;
+    G -- Sends response --> F;
+    F -- Displays answer --> A;
+```
 ---
 
 ## 🔧 Build Setup
