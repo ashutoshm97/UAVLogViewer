@@ -26,57 +26,36 @@ Non-Invasive Architecture: The new features are added without breaking any of th
 🏗️ System Architecture
 The application uses a decoupled, full-stack architecture. The frontend handles the user interface and initial client-side parsing, while the Python backend manages the AI agent, tool execution, and communication with the LLM.
 
+```mermaid
 graph TD
     subgraph Browser
-        A[User] -- "1. Uploads .bin file" --> B(Vue.js Frontend);
-        B -- "2. Parses file in Web Worker" --> C(Universal JS Parser);
-        C -- "3. Sends Full JSON to Backend" --> D;
-        B -- "(Original data flow preserved)" --> E[Plotly/Cesium UI];
-        A -- "4. Asks Question in Chat UI" --> F(Agent Chat Component);
-        F -- "5. Sends API Request to /api/chat" --> G; ## CORRECTED LINE ##
+        A[User] -- 1. Uploads .bin file --> B[Vue.js Frontend]
+        B -- 2. Parses file in Web Worker --> C[Universal JS Parser]
+        C -- 3. Sends Full JSON to Backend --> D
+        B -- (Original data flow preserved) --> E[Plotly/Cesium UI]
+        A -- 4. Asks Question in Chat UI --> F[Agent Chat Component]
+        F -- 5. Sends API Request --> D
     end
-    
+
     subgraph "Python Backend (Flask)"
-        D[API Endpoint /api/set-flight-data];
-        G[API Endpoint /api/chat];
-        D -- "Caches data" --> H{In-Memory Cache};
-        ## REMOVED REDUNDANT F --> G LINE ##
-        G -- "Invokes Agent" --> I(LangGraph Agent);
-        I -- "Uses" --> J[Flight Analysis Tools];
-        J -- "Reads data" --> H;
+        D[API Endpoint /api/set-flight-data]
+        G[API Endpoint /api/chat]
+        D -- Caches data --> H{In-Memory Cache}
+        F --> G
+        G -- Invokes Agent --> I[LangGraph Agent]
+        I -- Uses --> J[Flight Analysis Tools]
+        J -- Reads data --> H
     end
 
     subgraph "AI & Services"
-        I -- "Reasons with" --> K(Google Gemini LLM);
-        J -- "(Optional)" --> L[ArduPilot Docs];
+        I -- Reasons with --> K[Google Gemini LLM]
+        J -- (Optional) --> L[ArduPilot Docs]
     end
 
-    K -- "Decides which tool to use" --> I;
-    I -- "Returns final answer" --> G;
-    G -- "Sends response" --> F;
-    F -- "Displays answer" --> A;
----
-
-## 🔧 Build Setup
-
-```bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+    K -- Decides which tool to use --> I
+    I -- Returns final answer --> G
+    G -- Sends response --> F
+    F -- Displays answer --> A
 ```
 
 ---
