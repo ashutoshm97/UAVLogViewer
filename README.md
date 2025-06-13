@@ -7,8 +7,7 @@ This project extends the original UAV Log Viewer with a powerful, full-stack age
 ---
 
 🎥 Live Demo
-
-[Link to your screen-recorded video demonstrating the full functionality. You can upload the video to a service like Google Drive or Dropbox and share the link here, as requested in the challenge instructions.]
+[Watch on Google Drive](https://drive.google.com/file/d/1EYH6-ZfBR3kCrLGzO8OBJtDHAor9DAxM/view?usp=sharing&authuser=1)
 
 ---
 
