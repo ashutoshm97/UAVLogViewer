@@ -1,0 +1,9 @@
+flask
+flask-cors
+python-dotenv
+langchain
+langchain-google-genai
+langgraph
+pandas
+requests
+beautifulsoup4
